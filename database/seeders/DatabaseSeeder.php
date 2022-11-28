@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
+use Carbon\Carbon;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use App\Models\Antrian;
 use Faker\Factory as Faker;
+use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -42,6 +44,13 @@ class DatabaseSeeder extends Seeder
             'role' => 3,
             'no_hp' => '222222222',
             'alamat' => 'Di Kota Paling Jauh'
+        ]);
+
+        Antrian::create([
+            'no' => 1,
+            'user_id' => 2,
+            'status' => 2,
+            'tanggal_antrian' => Carbon::now()
         ]);
 
         for($i = 1; $i <= 50; $i++){

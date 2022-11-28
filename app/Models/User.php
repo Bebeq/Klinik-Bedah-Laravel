@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Models\Antrian;
+use App\Models\RekamMedis;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -48,6 +49,11 @@ class User extends Authenticatable
     public function antrian() {
         return $this->hasMany(Antrian::class);
     }
+
+    public function rekam_medis() {
+        return $this->hasMany(RekamMedis::class);
+    }
+    
 
     public function scopeFilter($query, array $filters) {
         $query->when($filters['search'] ?? false, function($query, $search) {

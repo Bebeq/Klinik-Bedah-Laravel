@@ -5,11 +5,12 @@ use App\Models\Antrian;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AntrianController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\RekamMedisController;
 use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\Admin\PasienController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\DaftarRekamMedisController;
 use App\Http\Controllers\Admin\AdminAntrianController;
-use App\Http\Controllers\RekamMedisController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,22 +25,14 @@ use App\Http\Controllers\RekamMedisController;
 
 Route::get('/dashboard', function () {
     if(auth()->user()->role == 1) {
-        return view('home',[
-            'antrians' => Antrian::latest()->where('user_id', auth()->user()->id)->whereIn('status',[1,2])->get(),
-            'antrian_now_pending' => Antrian::latest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->where('user_id', auth()->user()->id)->whereIn('status',[1])->first(),
-            'antrian_now_verif' => Antrian::latest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->where('user_id', auth()->user()->id)->whereIn('status',[2])->first(),
-            'total_antrian' => Antrian::latest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->where('status', 2)->count(),
-            'total_no' => Antrian::latest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->whereIn('status', [3,4,5,6])->count(),
-            'total_tidakhadir' => Antrian::latest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->where('status', 3)->count(),
-            'total_selesai' => Antrian::latest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->where('status', 5)->count(),
-            'total_cancel' => Antrian::latest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->whereIn('status', [7])->count(),
-        ]);
+        return AntrianController::index();
     } else if (auth()->user()->role == 3) {
-        return view('home',[
+        return view('Dokter/accessRekamMedis',[
             'pasien_first' => Antrian::oldest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->whereIn('status', [2])->first()
         ]);
     } else {
-        return view('home');
+        return AntrianController::index();
+        //Sementara
     }
 })->middleware('auth')->name('dashboard');
 
@@ -81,4 +74,6 @@ Route::prefix('admin')->name('admin.')->middleware('auth','admin')->group(functi
 // Route Dokter
 Route::prefix('dokter')->name('dokter.')->middleware('auth','dokter')->group(function () {
     Route::POST('rekammedis/store', [RekamMedisController::class, 'store'])->name('rekamMedis.store');
+    Route::POST('rekammedis/update', [RekamMedisController::class, 'edit'])->name('rekamMedis.edit');
+    Route::GET('rekammedis', [DaftarRekamMedisController::class, 'index'])->name('rekamMedis.index');
 });

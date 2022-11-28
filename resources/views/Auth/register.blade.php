@@ -85,9 +85,12 @@
 								</div>
 							@endif
 							@if($errors->any())
-								<div class="alert alert-danger"><i class="icon-copy fa fa-exclamation-triangle" aria-hidden="true"></i>
-									{!! $errors->first() !!}
-								</div>
+								<div class="alert alert-danger">
+									<span class="font-weight-bold"><i class="icon-copy fa fa-exclamation-triangle" aria-hidden="true"></i> Masukkanlah data dengan benar!</span>
+									@foreach ($errors->all() as $error)
+										<li>{{ $error }}</li>
+									@endforeach
+									</div>
 							@endif
 							
 							<form action="{{ route('auth.register.store') }}" method="post">

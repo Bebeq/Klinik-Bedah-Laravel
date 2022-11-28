@@ -19,22 +19,29 @@ class AdminAntrianController extends Controller
     // 5 : Selesai
     // 6 : Sudah Di Check Dokter
     // 7 : Cancel
-    public function index() {
-
+    public static function index() {
+        $total = Antrian::where('tanggal_antrian', Carbon::now()->format('Y-m-d'))
+                ->selectRaw('COUNT(CASE WHEN status IN (2,3,4,5,6) THEN 1 END) AS total_count')
+                ->selectRaw('COUNT(CASE WHEN status IN (3,4,5,6) THEN 1 END) AS total_no')
+                ->selectRaw('COUNT(CASE WHEN status = 2 THEN 1 END) AS total_antrian')
+                ->selectRaw('COUNT(CASE WHEN status = 3 THEN 1 END) AS total_tidakhadir')
+                ->selectRaw('COUNT(CASE WHEN status = 5 THEN 1 END) AS total_selesai')
+                ->selectRaw('COUNT(CASE WHEN status = 7 THEN 1 END) AS total_cancel')
+                ->first();
         return view('Admin/antrian',[
             'antrians_verif_now' => Antrian::latest()->where('status', 1)->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->get(),
             'antrians_verif_expired' => Antrian::latest()->whereIn('status', [1])->where('tanggal_antrian','<' ,Carbon::now()->format('Y-m-d'))->get(),
-            'antrians' => Antrian::orderBy('tanggal_antrian','ASC')->orderBy('status')->orderBy('no','ASC')->latest()->whereIn('status', [2,3,4,5,6,7])->paginate(20)->withQueryString(),
-            'antrians_info' => Antrian::latest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d')),
+            'antrians' => Antrian::with(['user'])->orderBy('tanggal_antrian','DESC')->orderBy('status')->orderBy('no','ASC')->latest()->whereIn('status', [2,3,4,5,6,7])->paginate(20)->withQueryString(),
+            // 'antrians_info' => Antrian::latest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d')),
             'users' => User::latest()->orderBy('id','ASC')->where('role',1)->get(),
             'pasien_first' => Antrian::oldest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->whereIn('status', [2])->first(),
-            'total_count' => Antrian::latest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->whereIn('status', [2,3,4,5,6])->count(),
-            'total_no' => Antrian::latest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->whereIn('status', [3,4,5,6])->count(),
-            'total_antrian' => Antrian::latest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->where('status', 2)->count(),
-            'total_tidakhadir' => Antrian::latest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->where('status', 3)->count(),
-            'total_selesai' => Antrian::latest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->where('status', 5)->count(),
+            'total_count' => $total->total_count,
+            'total_no' => $total->total_no,
+            'total_antrian' => $total->total_antrian,
+            'total_tidakhadir' => $total->total_tidakhadir,
+            'total_selesai' => $total->total_selesai,
             // 'total_success' => Antrian::latest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->whereIn('status', [6])->count(),
-            'total_cancel' => Antrian::latest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->whereIn('status', [7])->count(),
+            'total_cancel' => $total->total_cancel,
         ]);
     }
 

@@ -16,6 +16,8 @@ class CreateRekamMedisTable extends Migration
         Schema::create('rekam_medis', function (Blueprint $table) {
             $table->id();
             $table->string('antrian_id');
+            $table->string('user_id');
+            $table->string('created_id');
             $table->string('diagnosa');
             $table->string('keterangan')->nullable();
             $table->timestamps();
