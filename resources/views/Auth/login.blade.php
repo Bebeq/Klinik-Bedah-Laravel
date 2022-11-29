@@ -61,7 +61,7 @@
 			>
 				<div class="brand-logo">
 					<a href="login.html">
-						<img src="{{ asset('vendors/images/deskapp-logo.svg') }}" alt="" />
+						<img src="{{ asset('vendors/images/KBM.png') }}" alt="" />
 					</a>
 				</div>
 			</div>

@@ -165,20 +165,12 @@
         <i class="icon-copy fa fa-check" aria-hidden="true"></i> {{ session()->get('success') }}
     </div>
 @endif
-    <button type="button" class="btn btn-primary mb-2" data-toggle="modal" data-target="#Add"><i class="icon-copy dw dw-add-user"></i></i> Tambah User</button>
-        <form method="GET">
-            <div class="input-group mb-2">
-                <input type="text" name="search" class="form-control search-input" placeholder="Search Here">
-                <div class="input-group-append">
-                    <button type="submit" class="btn btn-outline-secondary">Search</button>
-                  </div>
-            </div>
-        </form>
 <div class="table-responsive">
-<table class="table table-hover">
+<table class="table table-hover data-table">
     <thead>
       <tr>
         <th scope="col">No</th>
+        <th scope="col">NIK</th>
         <th scope="col">Nama</th>
         <th scope="col">Action</th>
       </tr>
@@ -187,9 +179,12 @@
     @foreach ($pasiens as $pasien)
         <tr>
             <th>{{ $loop->iteration }}</th>
+            <td>{{ $pasien->nik }}</td>
             <td>{{ $pasien->name }}</td>
             <td>
-                <button class="btn btn-info">Show</button>
+                <a target="_blank" href="{{ route('dokter.rekamMedis.show', ['slug'=> $pasien->id]) }}" class="btn btn-info">
+                Show
+                </a>
             </td>
         </tr>
     @endforeach

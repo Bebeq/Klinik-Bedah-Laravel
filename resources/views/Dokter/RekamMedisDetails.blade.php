@@ -55,7 +55,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <form action="{{ route('admin.users.destroy') }}" method="POST">
+          <form action="{{ route('dokter.rekamMedis.destroy') }}" method="POST">
             @csrf
             <input type="hidden" name="id" id="modal-id-delete" value="">
             <button type="submit" class="btn btn-danger" id="modal-confirm_delete">Delete</button>
@@ -68,42 +68,26 @@
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
         <div class="modal-header">
-            <h5 class="modal-title">Tambah User</h5>
+            <h5 class="modal-title">Tambah Rekam Medis</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
             </button>
         </div>
         <div class="modal-body">
-            <form action="{{ route('admin.users.store') }}" method="POST">
+            <form action="{{ route('dokter.DaftarRekamMedis.store') }}" method="POST">
                 @csrf
                 <div class="form-group">
-                    <label>No HP</label>
-                    <input type="hidden" id="modal-id-add" name="id" value="">
-                    <input type="text" id="modal-nohp-add" name="no_hp" class="form-control" placeholder="Masukkan No HP">
+                    <label>Tanggal</label>
+                    <input type="text" name="created_at" readonly class="form-control date-picker" value="{{ Carbon\Carbon::now()->format('d F Y') }}" placeholder="Enter email">
                 </div>
                 <div class="form-group">
-                    <label>Nama</label>
-                    <input type="text" id="modal-name-add" name="name" class="form-control" placeholder="Masukkan Nama">
+                    <label>Diagnosa</label>
+                    <input type="hidden" value="{{ $pasiens->id }}" name="user_id" value="">
+                    <input type="text" id="modal-diagnosa-edit" name="diagnosa" class="form-control" placeholder="Masukkan Diagnosa">
                 </div>
                 <div class="form-group">
-                    <label>NIK</label>
-                    <input type="text" id="modal-nik-add" name="nik" class="form-control" placeholder="Masukkan NIK">
-                </div>
-                <div class="form-group">
-                    <label>Alamat</label>
-                    <input type="text" id="modal-alamat-add" name="alamat" class="form-control" placeholder="Masukkan Alamat">
-                </div>
-                <div class="form-group">
-                    <label>Sebagai</label>
-                        <select name="role" id="modal-sebagai-add" class="form-control">
-                            <option selected value="1">Pasien</option>
-                            <option value="2">Admin</option>
-                            <option value="3">Dokter</option>
-                        </select>
-                    </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input type="text" id="modal-password-add" name="password" class="form-control" placeholder="Masukkan Password">
+                    <label>Keterangan</label>
+                    <textarea id="modal-keterangan-edit" class="form-control" name="keterangan" rows="3">{{ old('keterangan') }}</textarea>
                 </div>
         </div>
         <div class="modal-footer">
@@ -149,74 +133,70 @@
     </div>
   </div>
 @endsection
-@section('container')
-@if (!empty($pasien_first))
-<div class="row">
-    <div class="col-lg-8">
-        <div class="card-box pd-20">
-            <h4 class="text-center mb-30 weight-600 mt-30">Rekam Medis Pasien Saat Ini</h4>
-            <div class="row pb-30">
-                <div class="col-md-6">
-                    <h5 class="mb-15">{{ $pasien_first->user->name }}</h5>
-                    <p class="font-14 mb-5">
-                        Tanggal <strong class="weight-600">{{ Carbon\Carbon::now()->format('d F Y') }}</strong>
-                    </p>
+
+@section('header')
+<div class="pd-ltr-20 xs-pd-20-10">
+    <div class="title">
+        <div class="page-header">
+            <div class="row">
+                <div class="col-md-6 col-sm-12">
+                    <div class="title">
+                        <h4>Rekam Medis <span class="text-primary">{{ $pasiens->name }}</span></h4>
+                    </div>
+                    <nav aria-label="breadcrumb" role="navigation">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="{{ route('dashboard') }}">Home</a>
+                            </li>
+                            <li class="breadcrumb-item">
+                                Admin
+                            </li>
+                            <li class="breadcrumb-item">
+                                Rekam Medis
+                            </li>
+                            <li class="breadcrumb-item active" aria-current="page">
+                                Details
+                            </li>
+                        </ol>
+                    </nav>
                 </div>
             </div>
-            <div class="pb-20">
-                <table class="data-table table stripe hover nowrap">
-                    <thead>
-                        <tr>
-                            <th>Tanggal</th>
-                            <th>No</th>
-                            <th class="datatable-nosort">Diagnosa</th>
-                            <th class="datatable-nosort">Keterangan</th>
-                            <th class="datatable-nosort">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($rekam_mediss->where('user_id', $pasien_first->user->id) as $rekam_medis)
-                        <tr>
-                            <td>{{ $loop->iteration}}</td>
-                            <td>{{ $rekam_medis->created_at->format('d F Y') }}</td>
-                            <td>{{ $rekam_medis->diagnosa }}</td>
-                            <td>{{ $rekam_medis->keterangan }}</td>
-                            <td>
-                                <div class="table-actions">
-                                    <a onclick="Edit({{ $rekam_medis->id }},'{{ $rekam_medis->created_at->format('d F Y') }}','{{ $rekam_medis->diagnosa }}','{{ $rekam_medis->keterangan }}')"  href="#" data-color="#265ed7" style="color: rgb(38, 94, 215);"><i class="icon-copy dw dw-edit2"></i></a>
-                                    <a onclick="Delete({{ $rekam_medis->id  }}, '{{ $rekam_medis->diagnosa }}')" href="#" data-color="#e95959" style="color: rgb(233, 89, 89);"><i class="icon-copy dw dw-delete-3"></i></a>
-                                </div>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
         </div>
+</div>
+@endsection
+@section('container')
+<div class="pd-20 card-box mb-30">
+    <button type="button" class="btn btn-primary mb-2" data-toggle="modal" data-target="#Add"><i class="icon-copy bi bi-plus-circle"></i> Tambah Rekam Medis</button>
+    <div class="table-responsive">
+        <table class="data-table table table-hover">
+            <thead>
+                <tr>
+                  <th scope="col">No</th>
+                  <th scope="col">Tanggal</th>
+                  <th scope="col">Diagnosa</th>
+                  <th scope="col">Keterangan</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+              @foreach ($pasiens->rekam_medis as $rekam_medis)
+                  <tr>
+                      <th>{{ $loop->iteration }}</th>
+                      <td>{{ $rekam_medis->created_at->format('d F Y') }}</td>
+                      <td>{{ $rekam_medis->diagnosa }}</td>
+                      <td>{{ $rekam_medis->keterangan }}</td>
+                      <td>
+                        <div class="table-actions">
+                            <a onclick="Edit({{ $rekam_medis->id }},'{{ $rekam_medis->created_at->format('d F Y') }}','{{ $rekam_medis->diagnosa }}','{{ $rekam_medis->keterangan }}')"  href="#" data-color="#265ed7" style="color: rgb(38, 94, 215);"><i class="icon-copy dw dw-edit2"></i></a>
+                            <a onclick="Delete({{ $rekam_medis->id  }}, '{{ $rekam_medis->diagnosa }}')" href="#" data-color="#e95959" style="color: rgb(233, 89, 89);"><i class="icon-copy dw dw-delete-3"></i></a>
+                        </div>
+                    </td>
+                  </tr>
+              @endforeach
+              </tbody>
+        </table>
     </div>
 </div>
-    <div class="col-lg-4">
-        <div class="card-box pd-20">
-            <form action="{{  route('dokter.rekamMedis.store') }}" method="post">
-                @csrf
-                <input type="hidden" name="antrian_id" value="{{ $pasien_first->id }}">
-                <div class="form-group">
-                    <label>Diagnosa</label>
-                    <input type="text" name="diagnosa" value="{{ old('diagnosa') }}" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label>Keterangan <small>[Optional]</small></label>
-                    <textarea class="form-control" name="keterangan" rows="3">{{ old('keterangan') }}</textarea>
-                </div>
-                <button class="btn btn-primary" type="submit">Tambah</button>
-            </form>
-        </div>
-    </div>
-</div>
-@else
-<div class="card-box pd-20">
-    <div class="alert alert-warning mt-1"><i class="icon-copy fa fa-exclamation-triangle" aria-hidden="true"></i> Tidak ada pasien.</div>
-</div>
-@endif
 @endsection
 
 @section('javascript')

@@ -1,7 +1,9 @@
 <?php
 
 use Carbon\Carbon;
+use App\Models\User;
 use App\Models\Antrian;
+use App\Models\RekamMedis;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AntrianController;
 use App\Http\Controllers\Auth\LoginController;
@@ -28,7 +30,9 @@ Route::get('/dashboard', function () {
         return AntrianController::index();
     } else if (auth()->user()->role == 3) {
         return view('Dokter/accessRekamMedis',[
-            'pasien_first' => Antrian::oldest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->whereIn('status', [2])->first()
+            // 'pasien_first' => Antrian::oldest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->whereIn('status', [2])->first(),
+            'pasien_first' => Antrian::oldest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->whereIn('status', [2])->first(),
+            'rekam_mediss' => RekamMedis::latest()->get(),
         ]);
     } else {
         return AntrianController::index();
@@ -75,5 +79,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth','admin')->group(functi
 Route::prefix('dokter')->name('dokter.')->middleware('auth','dokter')->group(function () {
     Route::POST('rekammedis/store', [RekamMedisController::class, 'store'])->name('rekamMedis.store');
     Route::POST('rekammedis/update', [RekamMedisController::class, 'edit'])->name('rekamMedis.edit');
+    Route::POST('rekammedis/destroy', [RekamMedisController::class, 'destroy'])->name('rekamMedis.destroy');
     Route::GET('rekammedis', [DaftarRekamMedisController::class, 'index'])->name('rekamMedis.index');
+    Route::GET('rekammedis/details/{slug}', [DaftarRekamMedisController::class, 'show'])->name('rekamMedis.show');
+    Route::POST('daftarrekammedis/store', [DaftarRekamMedisController::class, 'store'])->name('DaftarRekamMedis.store');
 });

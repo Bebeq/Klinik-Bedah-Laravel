@@ -301,6 +301,14 @@
 							<a href="{{ route('admin.antrian.index') }}" class="dropdown-toggle no-arrow {{ Route::is('admin.antrian.index') ? 'active' : '' }}"><i class="micon bi bi-journal-bookmark-fill"></i><span class="mtext">Daftar Antrian</span></a>
 						</li>
 						@endcan
+						@can('dokter')
+						<li>
+							<div class="dropdown-divider"></div>
+						</li>
+						<li>
+							<a href="{{ route('dokter.rekamMedis.index') }}" class="dropdown-toggle no-arrow {{ Route::is('dokter.rekamMedis.show') ? 'active' : '' }} {{ Route::is('dokter.rekamMedis.index') ? 'active' : '' }}"><i class="micon icon-copy bi bi-person-video"></i><span class="mtext">Daftar Pasien</span></a>
+						</li>
+						@endcan
 					</ul>
 				</div>
 			</div>
