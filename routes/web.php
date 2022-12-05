@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\PasienController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DaftarRekamMedisController;
 use App\Http\Controllers\Admin\AdminAntrianController;
+use App\Http\Livewire\DaftarUser;
 
 /*
 |--------------------------------------------------------------------------

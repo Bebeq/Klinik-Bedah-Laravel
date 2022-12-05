@@ -18,12 +18,15 @@
 		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"
 		/>
 		<!-- CSS -->
+		<link rel="stylesheet" href="{{ mix('css/app.css') }}">
 		<link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/core.css') }}" />
 		<link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/icon-font.min.css') }}" />
 		<link rel="stylesheet" type="text/css" href="{{ asset('src/plugins/datatables/css/dataTables.bootstrap4.min.css') }}" />
 		<link rel="stylesheet" type="text/css" href="{{ asset('src/plugins/datatables/css/responsive.bootstrap4.min.css') }}" />
 		<link rel="stylesheet" type="text/css" href="{{ asset('vendors/styles/style.css') }}" />
 
+		
+		@livewireStyles
 		<!-- Global site tag (gtag.js) - Google Analytics -->
 		<script
 			async
@@ -55,7 +58,7 @@
 	</head>
 	<body class="sidebar-light">
 		<div class="pre-loader">
-			<div class="pre-loader-box">
+			{{-- <div class="pre-loader-box">
 				<div class="loader-logo">
 					<img src="{{ asset('vendors/images/deskapp-logo.svg') }}" alt="" />
 				</div>
@@ -64,7 +67,7 @@
 				</div>
 				<div class="percent" id="percent1">0%</div>
 				<div class="loading-text">Loading...</div>
-			</div>
+			</div> --}}
 		</div>
 
 		<div class="header">
@@ -321,5 +324,7 @@
 			@yield('container')
 		</div>
 		@extends('Layouts.javascript')
+		@livewireScripts
+		<wireui:scripts />
 	</body>
 </html>

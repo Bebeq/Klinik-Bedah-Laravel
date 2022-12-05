@@ -1,4 +1,6 @@
 <!-- js -->
+<script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js"></script>
+<script src="{{ mix('js/app.js') }}"></script>
 <script src="{{ asset('vendors/scripts/core.js') }}"></script>
 <script src="{{ asset('vendors/scripts/script.min.js') }}"></script>
 <script src="{{ asset('vendors/scripts/process.js') }}"></script>
