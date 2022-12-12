@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Antrian;
+use App\Models\Settings;
 use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -20,6 +21,15 @@ class DatabaseSeeder extends Seeder
     {
         $faker = Faker::create('id_ID');
         // \App\Models\User::factory(10)->create();
+
+        Settings::create([
+            'nama' => 'title',
+            'keterangan' => 'Klinik Bedah Melati'
+        ]);
+        Settings::create([
+            'nama' => 'logo',
+            'keterangan' => 'Klinik Melati'
+        ]);
         User::create([
             'name' => 'Akbar Jadi Admin',
             'password' => Hash::make('admin'),

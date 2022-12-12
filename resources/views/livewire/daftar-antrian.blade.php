@@ -1,5 +1,59 @@
 <div>
-<div>
+    <div wire:ignore.self class="modal fade" id="Add" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Tambah Antrian</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" wire:submit.prevent="addAntrian">
+                    @if(Session::has('errorAdd'))
+                    <div class="alert alert-danger"><i class="icon-copy fa fa-exclamation-triangle" aria-hidden="true"></i> {{Session::get('errorAdd')}}</div>
+                    @endif
+                    <div class="form-group" >
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="form-group col-8">
+                                    <label>Cari Data Pasien</label>
+                                    <input wire:model='search_data' type="text" class="form-control @error('id_add') is-invalid @enderror" placeholder="Pencarian data pasien">
+                                </div>
+                                <div class="form-group col-4">
+                                    <label>Category</label>
+                                    <select wire:model="categoryAdd" id="inputState" class="form-control">
+                                        <option value="no">No RM</option>
+                                        <option value="nik">NIK</option>
+                                        <option value="nama">Nama</option>
+                                    </select>
+                                </div>
+                            </div>
+                            @empty($users)
+                            @else
+                            <select wire:model='id_add' class="custom-select @error('id_add') is-invalid @enderror" size="@if($users->count() > 5) 5 @elseif($users->count() == 1) 2 @else {{ $users->count() }} @endif" style="width: 100%">
+                                @foreach ($users as $user)
+                                    <option value="{{ $user->id }}">No {{ $user->id }} - NIK {{ $user->nik }} : {{ $user->name }}</option>
+                                @endforeach
+                            </select>
+                            @endempty
+                            @error('id_add') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">Tanggal</label>
+                            <input type="date" wire:model='tanggal_antrian' class="form-control date @error('tanggal_antrian') is-invalid @enderror" value="{{ Carbon\Carbon::now()->format('Y-m-d') }}" placeholder="Enter email">
+                            @error('tanggal_antrian') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Tambah</button>
+            </form>
+            </div>
+        </div>
+        </div>
+    </div>
     @if(session()->has('successAntrianExp'))
         <div class="alert alert-success">
             <i class="icon-copy fa fa-check" aria-hidden="true"></i> {{ session()->get('successAntrianExp') }}
@@ -128,12 +182,14 @@
 @endif
 <div class="row">
     <div class="col-lg-8">
-            <div class="card-box min-height-200px pd-20 mb-20" data-bgcolor="#265ed7" style="background-color: rgb(38, 94, 215);">
+            <div class="card-box min-height-200px pd-20 mb-20" data-bgcolor="@if($total_antrian > 0) #265ed7 @else #f56767  @endif" style="background-color: @if($total_antrian > 0) rgb(38, 94, 215) @else rgb(245, 103, 103)  @endif;" 
+            wire:loading.class="fade"
+            wire:target='selesai,tidakHadir'>
                 <div class="d-flex justify-content-between pb-40 text-white">
                     <div class="icon h1 text-white">
                         <div class="d-flex justify-content-start">
                             <i class="mt-1 icon-copy fa fa-stethoscope" aria-hidden="true"></i>
-                            <div class="ml-2">NO : {{ $total_no + 1  }}</div>
+                            <div class="ml-2">NO : @if($total_antrian > 0) {{ $total_no + 1  }} @else - @endif</div>
                         </div>
                     </div>
                         <div class="font-14 text-right">
@@ -170,8 +226,16 @@
         </div>
         <div class="col-lg-4">
             <div class="card-box pd-20 mb-20">
-                <button wire:click="selesai" type="button" class="btn btn-success btn-block mb-2"><i class="icon-copy bi bi-bookmark-check-fill"></i> Selesai</button>
-                <button wire:click="tidakHadir" type="submit" class="btn btn-danger btn-block"><i class="icon-copy bi bi-bookmark-x-fill"></i> Tidak Hadir</button>
+                <button wire:click="selesai" wire:loading.attr="disabled" type="button" class="btn btn-success btn-block mb-2"><i class="bi bi-bookmark-check-fill" 
+                                                                                                        wire:loading.class.remove="bi bi-bookmark-check-fill" 
+                                                                                                        wire:loading.class="fa-spin fa fa-circle-o-notch"
+                                                                                                        wire:target='selesai'>
+                                                                                                    </i> Selesai</button>
+                <button wire:click="tidakHadir" wire:loading.attr="disabled" type="button" class="btn btn-danger btn-block"><i class="icon-copy bi bi-bookmark-x-fill"
+                                                                                                        wire:loading.class.remove="icon-copy bi bi-bookmark-x-fill" 
+                                                                                                        wire:loading.class="fa-spin fa fa-circle-o-notch"
+                                                                                                        wire:target='tidakHadir'>
+                                                                                                    </i> Tidak Hadir</button>
             </div>
         </div>
 </div>
@@ -187,12 +251,29 @@
 @if(Session::has('errors'))
                     <div class="alert alert-danger"><i class="icon-copy fa fa-exclamation-triangle" aria-hidden="true"></i> {{Session::get('errors')->first()}}</div>
                     @endif
-    <button type="button" class="btn btn-primary mb-2" data-toggle="modal" data-target="#Add"><i class="icon-copy bi bi-journal-plus"></i> Tambah Antrian</button>
-            <div class="input-group mb-2">
-                <input wire:model="search" type="text" class="form-control search-input" placeholder="Search Here">
-                <div class="input-group-append">
-                    <button type="submit" class="btn btn-outline-secondary">Search</button>
-                  </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <button type="button" class="btn btn-primary mb-2" data-toggle="modal" data-target="#Add"><i class="icon-copy bi bi-journal-plus"></i> Tambah Antrian</button>
+                </div>
+                <div class="col-md-8">
+                    <div class="form-row">
+                        <div class="form-group col-md-2">
+                            <input wire:model="tanggal_table" type="date" class="form-control" value="{{ $tanggal_table }}" placeholder="Tanggal Table">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <input wire:model="search" type="text" class="form-control" placeholder="Pencarian data pasien">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <select wire:model="category" id="inputState" class="form-control">
+                                <option value="no">No RM</option>
+                                <option value="nik">NIK</option>
+                                <option value="nama">Nama</option>
+                                <option value="no_hp">No HP</option>
+                                <option value="alamat">Alamat</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
 <div class="table-responsive">
 <table class="table table-hover">
@@ -200,6 +281,7 @@
       <tr>
         <th scope="col">No</th>
         <th scope="col">No Antrian</th>
+        <th scope="col">No RM</th>
         <th scope="col">Nama Pasien</th>
         <th scope="col">NIK</th>
         <th scope="col">Tanggal Antrian</th>
@@ -210,12 +292,13 @@
     @foreach ($antrians as $antrian)
         <tr>
             <th>{{ $loop->iteration }}</th>
-            <td>@if (empty($antrian->no))
+            <th>@if (empty($antrian->no))
                 -
                 @else
                 {{ $antrian->no }}
                 @endif
-            </td>    
+            </th>    
+            <td>{{ $antrian->user->id }}</td>
             <td>{{ $antrian->user->name }}</td>
             <td>{{ $antrian->user->nik }}</td>
             <td>{{ $antrian->tanggal_antrian }}</td>
@@ -235,7 +318,7 @@
     @endforeach
     </tbody>
   </table>
-      {{  $antrians->links() }}
+      {{-- {{  $antrians->links() }} --}}
 </div>
 </div>
 </div>

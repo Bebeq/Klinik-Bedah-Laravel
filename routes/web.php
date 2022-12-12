@@ -4,16 +4,17 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Antrian;
 use App\Models\RekamMedis;
+use App\Http\Livewire\DaftarUser;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AntrianController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\RekamMedisController;
+use App\Http\Controllers\Admin\KartuController;
 use App\Http\Controllers\Admin\UsersController;
 use App\Http\Controllers\Admin\PasienController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DaftarRekamMedisController;
 use App\Http\Controllers\Admin\AdminAntrianController;
-use App\Http\Livewire\DaftarUser;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +26,11 @@ use App\Http\Livewire\DaftarUser;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
+Route::get('/', function () {
+    return redirect()->route('auth.login.index');
+})->name('home');
+
 
 Route::get('/dashboard', function () {
     if(auth()->user()->role == 1) {
@@ -40,6 +46,7 @@ Route::get('/dashboard', function () {
         //Sementara
     }
 })->middleware('auth')->name('dashboard');
+
 
 // Route Auth
 Route::prefix('auth')->name('auth.')->middleware('guest')->group(function () {
@@ -74,6 +81,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth','admin')->group(functi
     Route::POST('antrian/store', [AdminAntrianController::class, 'store'])->name('antrian.store');
     Route::POST('antrian/next', [AdminAntrianController::class, 'next'])->name('antrian.next');
     Route::POST('antrian/notComing', [AdminAntrianController::class, 'notComing'])->name('antrian.notComing');
+
+    Route::get('/kartu', [KartuController::class, 'show'])->name('kartu');
 });
 
 // Route Dokter

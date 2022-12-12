@@ -14,23 +14,62 @@ class DaftarAntrian extends Component
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
     public $search;
-    protected $updateQueryString = ['search'];
+    public $tanggal_table;
+    public $category = 'no';
+    public $search_data;
+    public $categoryAdd = 'no';
+    public $id_add;
+    public $tanggal_antrian;
+    protected $updateQueryString = ['search','search_data'];
     public function updatingSearch() {
         $this->resetPage();
     }
+
+    public function mount() {
+        $this->tanggal_antrian = Carbon::now()->format('Y-m-d');
+        $this->tanggal_table = Carbon::now()->format('Y-m-d');
+    }
     public function render()
     {
+        $users = null;
         if($this->search) {
-            $antrian = Antrian::whereHas('user', function (Builder $query) {
-                $query->where('name', 'like','%' . $this->search . '%')
-                ->orWhere('no_hp', 'like','%' . $this->search . '%')
-                ->orWhere('nik', 'like','%' . $this->search . '%')
-                ->orWhere('alamat', 'like','%' . $this->search . '%');
-            })->orderBy('tanggal_antrian','DESC')->orderBy('status')->orderBy('no','ASC')->latest()->whereIn('status', [2,3,4,5,6,7])
-            ->paginate(20);
+            if($this->category == "nama") {
+                $antrian = Antrian::whereHas('user', function (Builder $query) {
+                    $query->where('name', 'like','%' . $this->search . '%');
+                })->orderBy('tanggal_antrian','DESC')->orderBy('status')->orderBy('no','ASC')->latest()->whereIn('status', [2,3,4,5,6,7])->where('tanggal_antrian',$this->tanggal_table)->paginate(20);
+            } elseif ($this->category == "no") {
+                $antrian = Antrian::whereHas('user', function (Builder $query) {
+                    $query->where('id', 'like','%' . $this->search . '%');
+                })->orderBy('tanggal_antrian','DESC')->orderBy('status')->orderBy('no','ASC')->latest()->whereIn('status', [2,3,4,5,6,7])->where('tanggal_antrian',$this->tanggal_table)->paginate(20);
+            } elseif ($this->category == "no_hp") {
+                $antrian = Antrian::whereHas('user', function (Builder $query) {
+                    $query->where('no_hp', 'like','%' . $this->search . '%');
+                })->orderBy('tanggal_antrian','DESC')->orderBy('status')->orderBy('no','ASC')->latest()->whereIn('status', [2,3,4,5,6,7])->where('tanggal_antrian',$this->tanggal_table)->paginate(20);
+            } elseif ($this->category == "nik") {
+                $antrian = Antrian::whereHas('user', function (Builder $query) {
+                    $query->where('nik', 'like','%' . $this->search . '%');
+                })->orderBy('tanggal_antrian','DESC')->orderBy('status')->orderBy('no','ASC')->latest()->whereIn('status', [2,3,4,5,6,7])->where('tanggal_antrian',$this->tanggal_table)->paginate(20);
+            } elseif ($this->category == "alamat") {
+                $antrian = Antrian::whereHas('user', function (Builder $query) {
+                    $query->where('alamat', 'like','%' . $this->search . '%');
+                })->orderBy('tanggal_antrian','DESC')->orderBy('status')->orderBy('no','ASC')->latest()->whereIn('status', [2,3,4,5,6,7])->where('tanggal_antrian',$this->tanggal_table)->paginate(20);
+            }
         } else {
-            $antrian = Antrian::with(['user'])->orderBy('tanggal_antrian','DESC')->orderBy('status')->orderBy('no','ASC')->latest()->whereIn('status', [2,3,4,5,6,7])->paginate(20);
+            $antrian = Antrian::with(['user'])->orderBy('tanggal_antrian','DESC')->orderBy('status')->orderBy('no','ASC')->latest()->whereIn('status', [2,3,4,5,6,7])->where('tanggal_antrian',$this->tanggal_table)->paginate(20);
         }
+        if($this->search_data) {
+            if($this->categoryAdd == "nama") {
+                $users = User::oldest()->where('name', 'like','%' . $this->search_data . '%')->orderBy('id','ASC')->where('role',1)->get();
+            } elseif ($this->categoryAdd == "no") {
+                $users = User::oldest()->where('id', 'like','%' . $this->search_data . '%')->orderBy('id','ASC')->where('role',1)->get();
+            } elseif ($this->categoryAdd == "no_hp") {
+                $users = User::oldest()->where('no_hp', 'like','%' . $this->search_data . '%')->orderBy('id','ASC')->where('role',1)->get();
+            } elseif ($this->categoryAdd == "nik") {
+                $users = User::oldest()->where('nik', 'like','%' . $this->search_data . '%')->orderBy('id','ASC')->where('role',1)->get();
+            } elseif ($this->categoryAdd == "alamat") {
+                $users = User::oldest()->where('alamat', 'like','%' . $this->search_data . '%')->orderBy('id','ASC')->where('role',1)->get();
+            }
+        } 
         $total = Antrian::where('tanggal_antrian', Carbon::now()->format('Y-m-d'))
                 ->selectRaw('COUNT(CASE WHEN status IN (2,3,4,5,6) THEN 1 END) AS total_count')
                 ->selectRaw('COUNT(CASE WHEN status IN (3,4,5,6) THEN 1 END) AS total_no')
@@ -44,20 +83,45 @@ class DaftarAntrian extends Component
             'antrians_verif_expired' => Antrian::latest()->whereIn('status', [1])->where('tanggal_antrian','<' ,Carbon::now()->format('Y-m-d'))->get(),
             'antrians_expired' => Antrian::oldest()->whereIn('status', [2])->where('tanggal_antrian','<' ,Carbon::now()->format('Y-m-d'))->get(),
             'antrians' => $antrian,
-            // 'antrians_info' => Antrian::latest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d')),
-            'users' => User::latest()->orderBy('id','ASC')->where('role',1)->get(),
+            'users' => $users,
             'pasien_first' => Antrian::oldest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->whereIn('status', [2])->first(),
             'total_count' => $total->total_count,
             'total_no' => $total->total_no,
             'total_antrian' => $total->total_antrian,
             'total_tidakhadir' => $total->total_tidakhadir,
             'total_selesai' => $total->total_selesai,
-            // 'total_success' => Antrian::latest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->whereIn('status', [6])->count(),
             'total_cancel' => $total->total_cancel,
         ]);
     }
+
     public function addAntrian() {
-        session()->flash('success', $this->id_add);
+        $this->validate([
+            'id_add' => ['required','numeric'],
+            'tanggal_antrian' => ['required','date']
+        ],[
+            'id_add.required' => 'kamu belum memilih data'
+        ]);
+        $user = User::findOrFail($this->id_add);
+        $date = $this->tanggal_antrian;
+        $date_antrian = Antrian::where('user_id', $this->id_add)->where('tanggal_antrian', $date)->whereIn('status',[1,2]);
+        $antrian_count = Antrian::where('tanggal_antrian', $date)->whereIn('status', ['2','3','4','5','6','7'])->count();
+        $antrian = [
+            'user_id' => $this->id_add,
+            'status' => 2,
+            'tanggal_antrian' => $date,
+            'no' => $antrian_count + 1
+        ];
+        if ($date_antrian->count() > 0) {
+            return session()->flash('errorAdd', 'User ini sudah memiliki jadwal antrian pada hari ini.');
+        }
+        if ($date < Carbon::now()->format('Y-m-d')) {
+            return session()->flash('errorAdd', 'Kamu hanya dapat membuat antrian pada hari ini atau tanggal setelah hari ini.');
+        }
+        Antrian::create($antrian);
+        $this->dispatchBrowserEvent('addHide');
+        $this->reset(['id_add', 'search_data', 'tanggal_antrian']);
+        $this->tanggal_antrian = Carbon::now()->format('Y-m-d');
+        return session()->flash('success', 'Kamu berhasil mendaftarkan ' . $user->name . ' pada tanggal ' . $date . ' dan mendapat antrian nomor ' . $antrian['no']);
     }
 
     public function selesai() {

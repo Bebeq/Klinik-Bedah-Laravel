@@ -16,11 +16,11 @@ class CreateRiwayatPembayaransTable extends Migration
         Schema::create('riwayat_pembayarans', function (Blueprint $table) {
             // MASIH SEMENTARA
             $table->id();
-            $table->varchar('no_pembayaran');
+            $table->string('no_pembayaran');
             $table->bigInteger('antrian_id');
             $table->bigInteger('details_pembayaran_id');
             $table->bigInteger('created_id');
-            $table->varchar('jumlah_bayar');
+            $table->string('jumlah_bayar');
             $table->timestamps();
         });
     }

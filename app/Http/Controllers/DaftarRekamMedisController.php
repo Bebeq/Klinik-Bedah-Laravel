@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 class DaftarRekamMedisController extends Controller
 {
     public function index() {
-        return view('rekammedis',[
+        return view('Dokter/DaftarPasien',[
             // 'pasiens' => Antrian::latest()->where('tanggal_antrian', Carbon::now()->format('Y-m-d'))->paginate(20)
             'pasiens' => User::with(['antrian','rekam_medis'])->latest()->whereHas('antrian')->paginate(20),
         ]);

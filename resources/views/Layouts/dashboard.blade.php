@@ -4,7 +4,7 @@
 	<head>
 		<!-- Basic Page Info -->
 		<meta charset="utf-8" />
-		<title>{{ env('WEB_TITLE') }} - Home</title>
+		<title>{{ $settings->where('nama', 'title')->first()->keterangan }} - Home</title>
 
 		<!-- Site favicon -->
 		<link rel="apple-touch-icon" sizes="180x180" href="vendors/images/apple-touch-icon.png" />
@@ -58,16 +58,6 @@
 	</head>
 	<body class="sidebar-light">
 		<div class="pre-loader">
-			{{-- <div class="pre-loader-box">
-				<div class="loader-logo">
-					<img src="{{ asset('vendors/images/deskapp-logo.svg') }}" alt="" />
-				</div>
-				<div class="loader-progress" id="progress_div">
-					<div class="bar" id="bar1"></div>
-				</div>
-				<div class="percent" id="percent1">0%</div>
-				<div class="loading-text">Loading...</div>
-			</div> --}}
 		</div>
 
 		<div class="header">
@@ -272,13 +262,8 @@
 
 		<div class="left-side-bar">
 			<div class="brand-logo">
-				<a href="index.html">
-					<img src="{{ asset('vendors/images/deskapp-logo.svg') }}" alt="" class="dark-logo" />
-					<img
-						src="vendors/images/deskapp-logo-white.svg"
-						alt=""
-						class="light-logo"
-					/>
+				<a href="{{ route('dashboard') }}">
+					<span class="navbar-brand mb-0 h3 ml-1"><i class="h3 dw dw-stethoscope"></i> {{ $settings->where('nama', 'logo')->first()->keterangan }}</span>
 				</a>
 				<div class="close-sidebar" data-toggle="left-sidebar-close">
 					<i class="ion-close-round"></i>
