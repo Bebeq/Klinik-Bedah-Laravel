@@ -17,10 +17,14 @@ class CreateRiwayatPembayaransTable extends Migration
             // MASIH SEMENTARA
             $table->id();
             $table->string('no_pembayaran');
-            $table->bigInteger('antrian_id');
-            $table->bigInteger('details_pembayaran_id');
+            $table->bigInteger('user_id');
             $table->bigInteger('created_id');
-            $table->string('jumlah_bayar');
+            $table->string('biaya_dokter')->nullable();
+            $table->string('biaya_tindakan')->nullable();
+            $table->string('biaya_lain')->nullable();
+            $table->string('biaya_obat')->nullable();
+            $table->string('biaya_jumlah');
+            $table->string('tanggal_pembayaran');
             $table->timestamps();
         });
     }

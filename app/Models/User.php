@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Models\Antrian;
 use App\Models\RekamMedis;
+use App\Models\RiwayatPembayaran;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -52,6 +53,10 @@ class User extends Authenticatable
 
     public function rekam_medis() {
         return $this->hasMany(RekamMedis::class);
+    }
+
+    public function riwayat_pembayaran() {
+        return $this->hasMany(RiwayatPembayaran::class);
     }
     
 

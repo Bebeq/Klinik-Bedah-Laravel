@@ -288,6 +288,9 @@
 						<li>
 							<a href="{{ route('admin.antrian.index') }}" class="dropdown-toggle no-arrow {{ Route::is('admin.antrian.index') ? 'active' : '' }}"><i class="micon bi bi-journal-bookmark-fill"></i><span class="mtext">Daftar Antrian</span></a>
 						</li>
+						<li>
+							<a href="{{ route('admin.pembayaran.index') }}" class="dropdown-toggle no-arrow {{ Route::is('admin.pembayaran.index') ? 'active' : '' }}"><i class="micon bi bi-cash-stack"></i><span class="mtext">Daftar Pembayaran</span></a>
+						</li>
 						@endcan
 						@can('dokter')
 						<li>

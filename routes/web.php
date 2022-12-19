@@ -15,6 +15,9 @@ use App\Http\Controllers\Admin\PasienController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DaftarRekamMedisController;
 use App\Http\Controllers\Admin\AdminAntrianController;
+use App\Http\Controllers\Admin\DaftarPembayaranController;
+use App\Http\Controllers\InvoiceController;
+use App\Http\Livewire\DaftarPembayaran;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,8 +31,20 @@ use App\Http\Controllers\Admin\AdminAntrianController;
 */
 
 Route::get('/', function () {
-    return redirect()->route('auth.login.index');
+    return view('landing');
 })->name('home');
+
+Route::get('/contact', function () {
+    return view('contact');
+})->name('contact');
+
+Route::get('/about', function () {
+    return view('about');
+})->name('about');
+Route::get('/services', function () {
+    return view('services');
+})->name('services');
+
 
 
 Route::get('/dashboard', function () {
@@ -82,7 +97,10 @@ Route::prefix('admin')->name('admin.')->middleware('auth','admin')->group(functi
     Route::POST('antrian/next', [AdminAntrianController::class, 'next'])->name('antrian.next');
     Route::POST('antrian/notComing', [AdminAntrianController::class, 'notComing'])->name('antrian.notComing');
 
+    Route::GET('pembayaran', [DaftarPembayaranController::class, 'index'])->name('pembayaran.index');
+
     Route::get('/kartu', [KartuController::class, 'show'])->name('kartu');
+    Route::get('/invoice', [InvoiceController::class, 'show'])->name('invoice');
 });
 
 // Route Dokter

@@ -55,7 +55,7 @@
 
 	<body class="login-page">
 		<nav class="navbar navbar-expand-sm navbar-light bg-light mb-2">
-			<a class="navbar-brand h3" href="#"><i class="h3 dw dw-stethoscope mt-1"></i> {{ $settings->where('nama', 'logo')->first()->keterangan }}</a>
+			<a class="navbar-brand h3" href="{{ route('home') }}"><i class="h3 dw dw-stethoscope mt-1"></i> {{ $settings->where('nama', 'logo')->first()->keterangan }}</a>
 			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse">☰</button> 
 			<div class="collapse navbar-collapse" id="navbar-collapse">
 				<ul class="nav navbar-nav ml-auto">
