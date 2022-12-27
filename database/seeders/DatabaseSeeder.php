@@ -24,12 +24,26 @@ class DatabaseSeeder extends Seeder
 
         Settings::create([
             'nama' => 'title',
-            'keterangan' => 'Klinik Bedah Melati'
+            'keterangan' => 'Klinik Akbar'
         ]);
         Settings::create([
             'nama' => 'logo',
-            'keterangan' => 'Klinik Melati'
+            'keterangan' => 'Klinik Akbar'
         ]);
+
+        Settings::create([
+            'nama' => 'no_hp',
+            'keterangan' => '085727928601'
+        ]);
+        Settings::create([
+            'nama' => 'email',
+            'keterangan' => 'Klinikbedahmelati@gmail.com'
+        ]);
+        Settings::create([
+            'nama' => 'alamat',
+            'keterangan' => 'Gg. Buntu, Mlati Lor, Kec. Kota, Kabupaten Kudus'
+        ]);
+
         User::create([
             'name' => 'Akbar Jadi Admin',
             'password' => Hash::make('admin'),
@@ -70,6 +84,24 @@ class DatabaseSeeder extends Seeder
                 'nik' => $faker->randomNumber(5, true) . $faker->randomNumber(5, true) . $faker->randomNumber(5, true) . $faker->randomNumber(1, true),
                 'no_hp' => $faker->randomNumber(5, true) . $faker->randomNumber(5, true),
                 'alamat' => $faker->address
+            ]);
+        }
+
+
+        for($i = 1; $i <= 20; $i++){
+            Antrian::create([
+                'no' => rand(1,50),
+                'user_id' => rand(1,50),
+                'status' => 3,
+                'tanggal_antrian' => Carbon::now()->subDays(rand(0, 7))
+            ]);
+        }
+        for($i = 1; $i <= 20; $i++){
+            Antrian::create([
+                'no' => rand(1,50),
+                'user_id' => rand(1,50),
+                'status' => 5,
+                'tanggal_antrian' => Carbon::now()->subDays(rand(0, 7))
             ]);
         }
     }

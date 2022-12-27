@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DaftarRekamMedisController;
 use App\Http\Controllers\Admin\AdminAntrianController;
 use App\Http\Controllers\Admin\DaftarPembayaranController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Livewire\DaftarPembayaran;
 
@@ -57,7 +58,7 @@ Route::get('/dashboard', function () {
             'rekam_mediss' => RekamMedis::latest()->get(),
         ]);
     } else {
-        return AntrianController::index();
+        return DashboardController::index();
         //Sementara
     }
 })->middleware('auth')->name('dashboard');
